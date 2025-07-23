@@ -1,0 +1,22 @@
+b = Blog(name="Beatles Blog", tagline="All the latest Beatles news.")
+b.save()
+#create then save immediately
+cheese_blog = Blog.objects.create(name="Cheddar Talk", tagline="Greate cheese!")
+
+-----
+b2 = Blog.objects.create(name="Beatles Blog", tagline="All the latest Beatles news.")
+entry2 = Entry.objects.create(blog=b2, headline="Test entry", body_text="Bla bla bla", pub_date=date(2010, 1, 1))
+
+
+#F("name") ใช้เปรียบเทียบ
+products = Product.objects.filter(
+    Q(name__icontains="Smart") | Q(name__icontains="Electric")
+).exclude(
+    Q(description__icontains="compact") | Q(description__icontains="portable")
+).filter(description__icontains=F("name"))
+for p in products:
+    print(f"PRODUCT ID: {p.id}, NAME: {p.name}, DESCRIPTION: {p.description}")
+
+for o in Order.objects.filter(orderitem__product__name="Dog Bed"):
+#     c = Customer.objects.get(id = o.customer_id)
+    print(f"ORDER ID:{o.id}, DATE: {o.order_date}, CUSTOMER: {o.customer.first_name} {o.customer.last_name}, REMARK: {o.remark}")
