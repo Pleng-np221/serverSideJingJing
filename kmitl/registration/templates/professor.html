@@ -63,9 +63,9 @@
           <tbody class="divide-y divide-gray-100 text-sm">
             {% for professor in professor_list %}
               <tr class="hover:bg-orange-50 transition">
-                <td class="px-4 py-3">{{ }}</td>
-                <td class="px-4 py-3 font-medium">{{ }}</td>
-                <td class="px-4 py-3">{{ }}</td>
+                <td class="px-4 py-3">{{ professor.id }}</td>
+                <td class="px-4 py-3 font-medium">{{ professor.full_name }}</td>
+                <td class="px-4 py-3">{{ professor.faculty.name}}</td>
               </tr>
             {% empty %}
               <tr>
@@ -106,7 +106,7 @@
           filterValue = value.checked ? value.value : filterValue
         })
         // Hint: ใช้ template tag 'url' แทน '/'
-        window.location.href = `/?search=${searchInput.value}&filter=${filterValue}`
+        window.location.href = `{% url 'professor'%}?search=${searchInput.value}&filter=${filterValue}`
       }
       if (searchInput.value) searchInput.focus()
     </script>

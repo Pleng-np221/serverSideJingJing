@@ -46,10 +46,10 @@
           <tbody class="divide-y divide-gray-100 text-sm">
             {% for faculty in faculty_list %}
               <tr class="hover:bg-orange-50 transition">
-                <td class="px-4 py-3">{{ }}</td>
-                <td class="px-4 py-3 font-medium">{{ }}</td>
-                <td class="px-4 py-3">{{ }} People</td>
-                <td class="px-4 py-3">{{ }} People</td>
+                <td class="px-4 py-3">{{ faculty.id }}</td>
+                <td class="px-4 py-3 font-medium">{{ faculty.name }}</td>
+                <td class="px-4 py-3">{{ faculty.num_professors }} People</td>
+                <td class="px-4 py-3">{{ faculty.num_students }} People</td>
               </tr>
             {% empty %}
               <tr>
@@ -78,7 +78,7 @@
       
       function doneTyping() {
         // Hint: ใช้ template tag 'url' แทน '/'
-        window.location.href = `/?search=${searchInput.value}`
+        window.location.href = `{% url 'faculty'%}?search=${searchInput.value}`
       }
       if (searchInput.value) searchInput.focus()
     </script>

@@ -45,9 +45,9 @@
           <tbody class="divide-y divide-gray-100 text-sm">
             {% for course in course_list %}
               <tr class="hover:bg-orange-50 transition">
-                <td class="px-4 py-3">{{ }}</td>
-                <td class="px-4 py-3 font-medium">{{ }}</td>
-                <td class="px-4 py-3">{{ }}</td>
+                <td class="px-4 py-3">{{ course.course_code }}</td>
+                <td class="px-4 py-3 font-medium">{{ course.course_name }}</td>
+                <td class="px-4 py-3">{{ course.credits }}</td>
               </tr>
             {% empty %}
               <tr>
