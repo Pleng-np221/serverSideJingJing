@@ -1,20 +1,29 @@
-<html>
-    <head>
-    </head>
-    <body>
-        <h1>Question: {{ question.question_text }}</h1>
-        <p>Publist date: {{ question.pub_date }}</p>
-        <form action="/polls/{{ question.id }}/vote/" method="POST">
-            {%csrf_token%}
-            <ul>
-            {% for choice in choices %}
-                <li>
-                    <input type="radio" id="choice{{ forloop.counter }}" name="choice" value="{{ choice.id }}">
-                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label>
-                </li>
-            {% endfor %}
-            </ul>
-            <input type="submit" value ="VOTE" name="submit"/>
-        </form>
-    </body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+        <section class="section">
+            <h1 class="title">Question: {{ question.question_text }}</h1>
+            <p class="subtitle">Published date: {{ question.pub_date|date:"D d, M Y" }} ({{ question.pub_date|timesince }})</p>
+        </section>
+        <div class="container pl-6 pt-1">
+            <form action="{% url 'vote' question.id %}" method="POST">
+            {% csrf_token %}
+            <div class="field">
+                {% for choice in choices %}
+                <div class="control">
+                    <label class="radio">
+                        <input type="radio" id="choice{{ forloop.counter }}" name="choice" value="{{ choice.id }}">
+                        {{ choice.choice_text }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+              
+            <div class="field">
+                <div class="control">
+                  <input type="submit" class="button is-link" value="Submit">
+                </div>
+            </div>
+            </form>
+        </div>
+{% endblock %}

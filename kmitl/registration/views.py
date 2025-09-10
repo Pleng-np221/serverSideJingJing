@@ -12,15 +12,15 @@ class StudentView(View):
         search_txt = request.GET.get("search")
         filter_type = request.GET.get("filter")
         #filters = []
-        if (filter_type == ""):
-            student_list = Student.objects.annotate(full_name = Concat("first_name", Value(" "), "last_name")).filter(full_name__icontains = search_txt )
-            #filters["full_name__icontain"] = search_txt
-        elif (filter_type == "email"):
+        if (filter_type == "email"):
             student_list = Student.objects.filter(studentprofile__email__icontains = search_txt )
             #filters["studentprofile__email__icontain"] = search_txt
         elif (filter_type == "faculty"):
             student_list = Student.objects.filter(faculty__name__icontains = search_txt )
             #filters["faculty__name__icontain"] = search_txt
+        elif (search_txt):
+            student_list = Student.objects.annotate(full_name = Concat("first_name", Value(" "), "last_name")).filter(full_name__icontains = search_txt )
+            #filters["full_name__icontain"] = search_txt
         else:
             student_list = Student.objects.all()
         context = {
@@ -36,10 +36,11 @@ class ProfessorView(View):
 
         search_txt = request.GET.get("search")
         filter_type = request.GET.get("filter")
-        if (filter_type == ""):
-            professor_list = Professor.objects.annotate(full_name = Concat("first_name", Value(" "), "last_name")).filter(full_name__icontains = search_txt )
-        elif (filter_type == "faculty"):
+        if (filter_type == "faculty"):
             professor_list = Professor.objects.annotate(full_name = Concat("first_name", Value(" "), "last_name")).filter(faculty__name__icontains = search_txt )
+        elif (search_txt):
+            professor_list = Professor.objects.annotate(full_name = Concat("first_name", Value(" "), "last_name")).filter(full_name__icontains = search_txt )
+
         else:
             professor_list = Professor.objects.annotate(full_name = Concat("first_name", Value(" "), "last_name"))
         context = {
@@ -51,7 +52,12 @@ class ProfessorView(View):
 class CourseView(View):
 
     def get(self, request):
-        course_list = Course.objects.all()
+         
+        search_txt = request.GET.get("search")
+        if (search_txt):
+            course_list = Course.objects.filter(course_name__icontains = search_txt)
+        else:
+            course_list = Course.objects.all()
         context = {
             "course_list": course_list,
             "total": course_list.count()

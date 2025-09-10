@@ -1,16 +1,8 @@
+{% extends "layout.html" %}
+{% load static %}
 {% load custom_filter %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-
-  <body class="bg-white text-gray-800">
-    {% include 'nav.html' %}
-
+{% block title1 %}Student Dashboard{% endblock %}
+{% block content %}
     <main class="p-6 max-w-8xl mx-auto">
       <section class="mb-6 flex sm:flex-row flex-col gap-4 justify-between">
         <div class="flex items-center justify-between">
@@ -78,11 +70,17 @@
           </thead>
           <tbody class="divide-y divide-gray-100 text-sm">
             {% for student in student_list %}
+              {% if student.enrolled_sections.count is 0 %}
+              <tr class="text-red-600 hover:bg-orange-50 transition">
+              {% elif forloop.counter|divisibleby:"2" %}
+              <tr class="bg-gray-100 hover:bg-orange-50 transition">
+              {% else %}
               <tr class="hover:bg-orange-50 transition">
+              {% endif %}
                 <td class="px-4 py-3">{{ student.student_id }}</td>
-                <td class="px-4 py-3 font-medium">{{ student.first_name }} {{ student.last_name }}</td>
+                <td class="px-4 py-3 font-medium">{{ student.get_full_name }}</td>
                 <td class="px-4 py-3">{{ student.studentprofile.email }}</td>
-                <td class="px-4 py-3">{{ student.studentprofile.phone_number }}</td>
+                <td class="px-4 py-3">{{ student.studentprofile.phone_number|formatPhoneNumber }}</td>
                 <td class="px-4 py-3">{{ student.faculty.name}}</td>
                 <td class="px-4 py-3">
                   {% if student.enrolled_sections.count %}
@@ -106,38 +104,7 @@
       </div>
     </main>
 
-    <script>
-      let typingTimer
-      const doneTypingInterval = 500
-      
-      const searchInput = document.getElementById('search')
-      const filterField = document.getElementsByName('a_filter')
-      
-      if (searchInput.value !== '') {
-        const endPosition = searchInput.value.length
-        searchInput.setSelectionRange(endPosition, endPosition)
-      }
-      
-      searchInput.addEventListener('keyup', () => {
-        clearTimeout(typingTimer)
-        typingTimer = setTimeout(doneTyping, doneTypingInterval)
-      })
-      
-      filterField.forEach((value, index) => {
-        value.addEventListener('click', () => {
-          doneTyping()
-        })
-      })
-      
-      function doneTyping() {
-        let filterValue = ''
-        filterField.forEach((value, index) => {
-          filterValue = value.checked ? value.value : filterValue
-        })
-        // Hint: ใช้ template tag 'url' แทน '/'
-        window.location.href = `{% url 'index'%}?search=${searchInput.value}&filter=${filterValue}`
-      }
-      if (searchInput.value) searchInput.focus()
-    </script>
-  </body>
-</html>
+{% endblock %}
+{% block script %}
+{% static 'index.js' %}
+{% endblock %}

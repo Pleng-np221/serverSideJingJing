@@ -4,11 +4,17 @@ from django.views import View
 from .models import Question, Choice
 
 
-class IndexView(View):
+# class IndexView(View):
 
+#     def get(self, request):
+#         latest_question_list = Question.objects.order_by("-pub_date")[:5]
+#         context = {"latest_question_list": latest_question_list}
+#         return render(request, "index.html", context)
+
+class IndexView(View):
     def get(self, request):
-        latest_question_list = Question.objects.order_by("-pub_date")[:5]
-        context = {"latest_question_list": latest_question_list}
+        question_list = Question.objects.order_by("-pub_date")
+        context = {"question_list": question_list}
         return render(request, "index.html", context)
 
 class PollView(View):

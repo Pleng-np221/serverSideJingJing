@@ -1,16 +1,8 @@
+{% extends "layout.html" %}
+{% load static %}
 {% load custom_filter %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Course Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-
-  <body class="bg-white text-gray-800">
-    {% include 'nav.html' %}
-
+{% block title1 %}Course Dashboard{% endblock %}
+{% block content %}
     <main class="p-6 max-w-8xl mx-auto">
       <section class="mb-6 flex sm:flex-row flex-col gap-4 justify-between">
         <div class="flex items-center justify-between">
@@ -44,7 +36,11 @@
           </thead>
           <tbody class="divide-y divide-gray-100 text-sm">
             {% for course in course_list %}
+              {% if forloop.counter|divisibleby:"2" %}
+              <tr class="bg-gray-100 hover:bg-orange-50 transition">
+              {% else %}
               <tr class="hover:bg-orange-50 transition">
+              {% endif %}
                 <td class="px-4 py-3">{{ course.course_code }}</td>
                 <td class="px-4 py-3 font-medium">{{ course.course_name }}</td>
                 <td class="px-4 py-3">{{ course.credits }}</td>
@@ -58,27 +54,7 @@
         </table>
       </div>
     </main>
-
-    <script>
-      let typingTimer
-      const doneTypingInterval = 500
-      
-      const searchInput = document.getElementById('search')
-      if (searchInput.value !== '') {
-        const endPosition = searchInput.value.length
-        searchInput.setSelectionRange(endPosition, endPosition)
-      }
-      
-      searchInput.addEventListener('keyup', () => {
-        clearTimeout(typingTimer)
-        typingTimer = setTimeout(doneTyping, doneTypingInterval)
-      })
-      
-      function doneTyping() {
-        // Hint: ใช้ template tag 'url' แทน '/'
-        window.location.href = `/?search=${searchInput.value}`
-      }
-      if (searchInput.value) searchInput.focus()
-    </script>
-  </body>
-</html>
+{% endblock %}
+{% block script %}
+{% static 'course.js' %}
+{% endblock %}
