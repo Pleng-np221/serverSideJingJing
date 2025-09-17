@@ -3,7 +3,7 @@ from django.views import View
 from django.db.models import Count, Value
 from django.db.models.functions import Concat
 from .models import *
-
+from .forms import StudentForm
 
 class StudentView(View):
 
@@ -85,11 +85,13 @@ class CreateStudentView(View):
         student_list = Student.objects.all()
         faculties = Faculty.objects.all()
         sections = Section.objects.all()
+        form = StudentForm()
         context = {
             "student_list": student_list,
             "total": student_list.count(),
             "faculties": faculties,
-            "sections": sections
+            "sections": sections,
+            "form": form,
                    }
         return render(request, "create_student.html", context)
     
@@ -107,4 +109,61 @@ class CreateStudentView(View):
         if (section_ids):
             new_student.enrolled_sections.add(*section_ids)
             new_student.save()
+        return redirect("index")
+    
+class UpdateStudentView(View):
+
+    def get(self, request):
+        # student_id = request.GET.get('student_id')
+        # student = Student.objects.get(student_id=student_id)
+
+        id = request.GET.get('id')
+        student = Student.objects.get(pk=id)
+
+        faculties = Faculty.objects.all()
+        sections = Section.objects.all()
+
+        form = StudentForm(initial=
+                {"student_id": student.student_id,
+                 "first_name": student.first_name,
+                 "last_name": student.last_name,
+                 "faculty": student.faculty,
+                 "email": student.studentprofile.email,
+                 "phone_number": student.studentprofile.phone_number,
+                 "address": student.studentprofile.address,
+                }
+            )
+        context = {
+            "student": student,
+            "form": form,
+            "faculties": faculties,
+            "sections": sections
+                   }
+        return render(request, "update_student.html", context)
+    def post(self, request):
+        # id = request.POST.get('id')
+        student_id = request.POST.get('student_id')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        faculty = request.POST.get('faculty')
+        email = request.POST.get('email')
+        phone_number = request.POST.get('phone_number')
+        address = request.POST.get('address')
+        section_ids = request.POST.get('enrolled_sections')
+        print(section_ids)
+        update_student = Student.objects.get(student_id = student_id)
+        update_student = Student.objects.get(student_id=student_id)
+        update_student.first_name = first_name
+        update_student.last_name = last_name
+        update_student.faculty_id = faculty
+        update_student.save()
+        profile = StudentProfile.objects.get(student = update_student)
+        profile.email = email
+        profile.phone_number = phone_number
+        profile.address = address
+        profile.save()
+
+        if (section_ids):
+            update_student.enrolled_sections.add(*section_ids)
+            update_student.save()
         return redirect("index")

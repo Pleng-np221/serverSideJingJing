@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title1 %}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-white text-gray-800">
+    <h1 class="title text-center">
+        {% block title2 %}{% endblock %}
+    </h1>
+    {% block nav %}
+        {% include 'nav.html' %}
+    {% endblock %}
+    {% block head %}{% endblock %}
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+    <script src="{% block script %}{% endblock %}"></script>
+</body>
+</html>

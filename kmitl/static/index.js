@@ -21,6 +21,7 @@ function doneTyping() {
   if (filterField && filterField.length) {
     const chosen = Array.from(filterField).find(el => el.checked || el.selected);
     if (chosen && chosen.value) url.searchParams.set('filter', chosen.value);
+    else url.searchParams.set('filter', '');
   }
   window.location.href = url.toString();
 }

@@ -47,10 +47,14 @@ class Section(models.Model):
     capacity = models.PositiveSmallIntegerField(default=60)
 
     def __str__(self):
-        return f"{self.course.course_code} ({self.section_number}) - {self.semester})"
+        return f"{self.course.course_code} - {self.course.course_name} | Sec {self.section_number} | {self.dayOfWeekThai()} {self.start_time.strftime("%H:%M")}-{self.end_time.strftime("%H:%M")} | {self.semester}"
         
     def dayOfWeek(self):
         weekday = {"MON": 0, "TUE": 1, "WED": 2, "THU": 3, "FRI": 4}
+        return weekday[self.day_of_week]
+    
+    def dayOfWeekThai(self):
+        weekday = {"MON": "จันทร์", "TUE": "อังคาร", "WED": "พุธ", "THU": "พฤหัสบดี", "FRI": "ศุกร์"}
         return weekday[self.day_of_week]
 
 
@@ -61,16 +65,18 @@ class Student(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.PROTECT)
     # ความสัมพันธ์จะถูกย้ายมาอยู่ที่นี่
     enrolled_sections = models.ManyToManyField(Section, blank=True)
-    def get_full_name(self):
-        return f"{self.first_name} {self.last_name}"
+
     def __str__(self):
         return f"{self.student_id} - {self.first_name}"
+
+    def get_full_name(self):
+        return f"{self.first_name} - {self.last_name}"
 
 
 class StudentProfile(models.Model):
     student = models.OneToOneField(Student, on_delete=models.CASCADE, primary_key=True)
     email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    phone_number = models.CharField(max_length=10, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
 
     def __str__(self):

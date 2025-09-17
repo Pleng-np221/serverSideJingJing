@@ -10,5 +10,5 @@ def sortSectionByDayOfWeek(sections):
 
 @register.filter
 def formatPhoneNumber(phone_number):
-    new_number = phone_number[0:3]+"-"+phone_number[4:7]+""+phone_number[7:]
+    new_number = phone_number[0:3]+"-"+phone_number[3:7]+"-"+phone_number[7:]
     return new_number
