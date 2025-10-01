@@ -8,6 +8,8 @@ from .forms import *
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 
+from django.db import transaction
+
 class StudentView(View):
 
     def get(self, request):
@@ -128,19 +130,21 @@ class CreateStudentView(View):
         stdform = StudentForm(request.POST)
         pfform = StudentProfileForm(request.POST, request.FILES)
 
-        if stdform.is_valid() and pfform.is_valid():
-            student = stdform.save()
-            profile = pfform.save(commit=False)
-            profile.student = student
-            # student.save()
-            profile.save()
-
-            return redirect('index')
-
-        return render(request, "create_student.html", {
-            "stdform": stdform,
-            "pfform": pfform,
-        })
+        try:
+            with transaction.atomic():
+                if stdform.is_valid() and pfform.is_valid():
+                    student = stdform.save()
+                    profile = pfform.save(commit=False)
+                    profile.student = student
+                    profile.save()
+                    return redirect('index')
+                else:
+                    raise transaction.TransactionManagementError("Error")
+        except Exception:
+            return render(request, "create_student.html", {
+                "stdform": stdform,
+                "pfform": pfform,
+            })
     
 class UpdateStudentView(View):
 
@@ -214,22 +218,22 @@ class UpdateStudentView(View):
         return render(request, "update_student.html", context)
 
     def post(self, request):
-        id = request.POST.get('id')
-        student = Student.objects.get(pk=id)
+        id = request.POST.get('student_id')
+        student = Student.objects.get(student_id=id)
 
         stdform = StudentForm(request.POST, instance=student)
-        pfform = StudentProfileForm(request.POST, instance=student.studentprofile)
+        pfform = StudentProfileForm(request.POST, request.FILES, instance=student.studentprofile)
 
         if stdform.is_valid() and pfform.is_valid():
             student = stdform.save()
             profile = pfform.save(commit=False)
             profile.student = student
+            # student.save()
             profile.save()
 
-            return redirect("index")
+            return redirect('index')
 
         return render(request, "update_student.html", {
-            "student": student,
             "stdform": stdform,
             "pfform": pfform,
         })
